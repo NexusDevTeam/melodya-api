@@ -13,15 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('playlist_sounds', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->text("bio");
-            $table->string('avatar_url');
-            $table->rememberToken();
+            $table->foreignId('playlist_id')->constrained('playlists')->cascadeOnDelete();
+            $table->foreignId('sound_id')->constrained('sounds')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -33,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('playlist_sounds');
     }
 };

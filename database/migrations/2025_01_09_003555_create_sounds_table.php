@@ -13,15 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('sounds', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->text("bio");
-            $table->string('avatar_url');
-            $table->rememberToken();
+            $table->string('sound_url');
+            $table->unsignedInteger('number_reproductions')->default(0);
+            $table->unsignedInteger('duration_seconds');
+            $table->json('credits')->nullable();
+            $table->foreignId('album_id')->constrained('albums')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('sounds');
     }
 };
