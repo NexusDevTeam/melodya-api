@@ -1,66 +1,231 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Skeleton Laravel 11 Project
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 📝 Descrição
 
-## About Laravel
+Este projeto é um **Skeleton** desenvolvido utilizando o framework **Laravel 11**, seguindo os princípios do **SOLID** para garantir flexibilidade, manutenibilidade e escalabilidade. Além disso, utiliza o padrão **Service Repository**, promovendo uma separação clara entre as responsabilidades de acesso aos dados e lógica de negócios.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🌟 Funcionalidades Principais
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Estrutura modular e organizada.
+- Padrão Service Repository para um código limpo e reutilizável.
+- Autenticação obrigatória para acesso às rotas protegidas.
+- Proteção de rotas por perfis e permissões.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ⚙️ Requisitos
 
-## Learning Laravel
+- **PHP**: Versão 8.1 ou superior
+- **Composer**: Para gerenciar dependências
+- **SQLite/MySQL/PostgreSQL**: Banco de dados para persistência
+- **Laravel Sail**: Para facilitar o ambiente de desenvolvimento
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 📂 Estrutura do Projeto
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```plaintext
+├── app
+│   ├── Constants
+│   │   └── Constants.php
+│   ├── Enums
+│   │   ├── ActiveRoleUser.php
+│   ├── Exceptions
+│   │   └── Handler.php
+│   ├── Helpers
+│   │   └── ImageHelper.php
+│   ├── Http
+│   │   ├── Controllers
+│   │   │   ├── Api
+│   │   │   │   └── V1
+│   │   │   │       ├── Assessment
+│   │   │   │       │   └── AssessmentController.php
+│   │   │   │       ├── Auth
+│   │   │   │       │   └── AuthController.php
+│   │   │   │       ├── CrudController.php
+│   │   │   │       ├── Permission
+│   │   │   │       │   └── PermissionController.php
+│   │   │   │       ├── Role
+│   │   │   │       │   └── RoleController.php
+│   │   │   │       ├── Traits
+│   │   │   │       │   ├── CrudController.php
+│   │   │   │       │   ├── ExceptionResponse.php
+│   │   │   │       │   └── HasForm.php
+│   │   │   │       └── User
+│   │   │   │           └── UserController.php
+│   │   │   └── Controller.php
+│   │   ├── Requests
+│   │   │   ├── Api
+│   │   │   │   └── V1
+│   │   │   │       ├── Assessment
+│   │   │   │       │   └── AssessmentRequest.php
+│   │   │   │       ├── Permission
+│   │   │   │       │   ├── PermissionRequest.php
+│   │   │   │       │   └── PermissionSyncRequest.php
+│   │   │   │       ├── Role
+│   │   │   │       │   └── RoleRequest.php
+│   │   │   │       └── User
+│   │   │   │           └── UserFormRequest.php
+│   │   │   ├── CrudRequest.php
+│   │   │   └── FormRequest.php
+│   │   └── Resources
+│   │       └── User
+│   │           ├── UserListResource.php
+│   │           └── UserResource.php
+│   ├── Models
+│   │   ├── Assessment.php
+│   │   └── User.php
+│   ├── Providers
+│   │   └── AppServiceProvider.php
+│   ├── Repositories
+│   │   ├── Api
+│   │   │   └── V1
+│   │   │       ├── Assessment
+│   │   │       │   └── AssessmentRepository.php
+│   │   │       ├── Permission
+│   │   │       │   └── PermissionRepository.php
+│   │   │       ├── Role
+│   │   │       │   └── RoleRepository.php
+│   │   │       └── User
+│   │   │           └── UserRepository.php
+│   │   └── BaseRepository.php
+│   └── Services
+│       └── Api
+│           └── V1
+│               └── Upload
+│                   └── ImageUploaderService.php
+├── database
+│   ├── database.sqlite
+│   ├── factories
+│   │   └── UserFactory.php
+│   ├── migrations
+│   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   ├── 2025_01_10_172816_create_permission_tables.php
+│   │   ├── 2025_01_10_175743_create_audits_table.php
+│   │   ├── 2025_01_10_210557_create_personal_access_tokens_table.php
+│   │   ├── 2025_01_10_223705_add_collumn_title_to_roles.php
+│   │   └── 2025_01_11_143819_create_assessments_table.php
+│   └── seeders
+│       ├── DatabaseSeeder.php
+│       ├── RolesAndPermissionsSeeder.php
+│       └── UserSeeder.php
+├── dev-setup.sh
+├── routes
+│   ├── api.php
+│   ├── assessment
+│   │   └── routes.php
+│   ├── auth
+│   │   └── routes.php
+│   ├── console.php
+│   ├── unauth
+│   │   └── routes.php
+│   ├── user
+│   │   └── routes.php
+│   └── web.php
+``` 
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Obs: O arquivo `.env` deve ser copiado do `.env.example`.
 
-## Laravel Sponsors
+## 🚀 Começando
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+Essas instruções permitirão que você obtenha uma cópia do projeto em operação na sua máquina local para fins de desenvolvimento e teste.
 
-### Premium Partners
+### 📋 Pré-requisitos
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Para instalar o software, você precisa ter o Docker instalado na sua máquina. Caso ainda não tenha o Docker, siga a documentação oficial para instalá-lo:
 
-## Contributing
+[Docker - Documentação Oficial](https://docs.docker.com/get-docker/)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 🔧 Instalação
 
-## Code of Conduct
+Este projeto utiliza o Docker juntamente com o utilitário do Laravel (Sail), portanto, não é necessário instalar nada além do Docker na sua máquina.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Para instalar as dependências, abra o terminal na pasta do projeto e execute o seguinte comando:
 
-## Security Vulnerabilities
+```
+./dev-setup.sh
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+Aguarde até que todas as dependências sejam instaladas.
 
-## License
+### 🔩 Executando o projeto
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Para iniciar o projeto, execute os seguintes comandos:
+
+1. Inicie o ambiente com Docker:
+   ```
+   ./vendor/bin/sail up -d
+   ```
+
+2. Execute as migrações para configurar o banco de dados:
+   ```
+   ./vendor/bin/sail artisan migrate
+   ```
+
+### 🌱 Rodando Seeders
+
+Para preencher o banco de dados com informações de exemplo, execute os seguintes comandos:
+
+```
+./vendor/bin/sail artisan db:seed --class=DatabaseSeeder
+```
+
+## 🔒 Autenticação
+
+Para acessar as rotas protegidas, é necessário realizar login utilizando as credenciais adequadas. Exemplo de requisição:
+
+**POST**: `http://localhost:8080/api/auth/login`
+
+### Request Body:
+```json
+{
+    "email": "adm@skeleton.com",
+    "password": "adm@skeleton"
+}
+```
+
+### Exemplo de Resposta:
+```json
+{
+    "accessToken": "1|nm9TPUjzfQpzFjwJeZCx4j3GhmCJ45mg8JK6DOId27fb7446",
+    "user": {
+        "id": 1,
+        "external_id": "ac579656-d948-4511-9466-4b5b40b03a07",
+        "name": "administrador",
+        "email": "adm@educria.com",
+        "phone": "99999999999",
+        "cpf": "99999999999",
+        "birth_date": "1990-01-02",
+        "image": null,
+        "active_role": "super_admin",
+        "email_verified_at": null,
+        "created_at": "2025-01-10T14:07:51.000000Z",
+        "updated_at": "2025-01-10T14:07:51.000000Z",
+        "deleted_at": null,
+        "roles": {
+            "super_admin": {
+                "name": "super_admin",
+                "permissions": [
+                    "user_edit",
+                    "user_list",
+                    "user_create",
+                    "user_delete",
+                    "permission_edit",
+                    "permission_list",
+                    "permission_create",
+                    "permission_delete",
+                    "role_edit",
+                    "role_list",
+                    "role_create",
+                    "role_delete",
+                    "assessment_edit",
+                    "assessment_list",
+                    "assessment_create",
+                    "assessment_delete"
+                ]
+            }
+        }
+    }
+}
+```
+
+
+Agora você está pronto para começar a usar o Skeleton! 💀 😊
