@@ -41,6 +41,7 @@ Route::get('/me', function () {
         cache()->put($user, $profile, 120);
     }
 
+    // dd($profile);
     $name = $profile['name'] ?? 'Unknown';
     $email = $profile['email'] ?? 'Unknown';
 

@@ -12,15 +12,10 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('external_id')->unique()->index();
-            $table->string('name');
-            $table->string('email')->unique()->index();
-            $table->string('password');
-            $table->string('phone');
-            $table->date('birth_date');
-            $table->text('avatar_url')->nullable();
-            $table->string('active_role');
-            $table->timestamp('email_verified_at')->nullable();
+            $table->string('auth0_id')->unique()->index();
+            $table->string('auth0_user_id')->unique()->index();
+            $table->string('auth0_provider')->index();
+            $table->text('bio')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

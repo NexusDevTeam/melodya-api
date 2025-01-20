@@ -2,10 +2,10 @@
 
 namespace App\Repositories\Api\V1\User;
 
+use App\Http\Resources\User\UserListResource;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use App\Repositories\BaseRepository;
-use App\Http\Resources\User\UserResource;
-use App\Http\Resources\User\UserListResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,11 +18,12 @@ class UserRepository extends BaseRepository
         $perPage = $queryParams['per_page'] ?? 25;
         $users = $this->model
             ->when(isset($queryParams['q']), function ($query) use ($queryParams) {
-                $query->where('name', 'like', '%' . $queryParams['q'] . '%')
-                    ->orWhere('email', 'like', '%' . $queryParams['q'] . '%')
-                    ->orWhere('nickname', 'like', '%' . $queryParams['q'] . '%');
+                $query->where('name', 'like', '%'.$queryParams['q'].'%')
+                    ->orWhere('email', 'like', '%'.$queryParams['q'].'%')
+                    ->orWhere('nickname', 'like', '%'.$queryParams['q'].'%');
             })
             ->paginate($perPage);
+
         return UserListResource::collection($users);
     }
 
@@ -57,6 +58,7 @@ class UserRepository extends BaseRepository
     public function afterSave($resource, $attributes): Model|JsonResource
     {
         $resource->syncRoles($attributes['profiles']);
+
         return $resource;
     }
 
@@ -71,6 +73,7 @@ class UserRepository extends BaseRepository
         $user->active_role = $attributes['active_role'];
 
         $user->save();
+
         return $user;
     }
 
