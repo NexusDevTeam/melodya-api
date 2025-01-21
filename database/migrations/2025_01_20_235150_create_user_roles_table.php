@@ -7,19 +7,13 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('artists', function (Blueprint $table) {
+        Schema::create('user_roles', function (Blueprint $table) {
             $table->id();
-            $table->string('external_id')->unique()->index();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->text('bio')->nullable();
-            $table->string('banner_url')->nullable();
-            $table->json('photos_url')->nullable();
-            $table->json('social_media')->nullable();
+            $table->foreignId('role_id')->constrained('roles')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });
@@ -27,11 +21,9 @@ return new class extends Migration {
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('artists');
+        Schema::dropIfExists('user_roles');
     }
 };

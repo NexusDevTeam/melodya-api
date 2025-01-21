@@ -13,20 +13,20 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        $user = User::updateOrCreate(
-            ['email' => 'adm@skeleton.com'],
-            [
-                'external_id' =>  Str::uuid()->toString(),
-                'name' => 'administrador',
-                'password' => bcrypt('adm@skeleton'),
-                'phone' => '99999999999',
-                'cpf' => '99999999999',
-                'birth_date' => '1990-01-02',
-                'active_role' => 'super_admin',
-            ]
-        );
+        // $user = User::updateOrCreate(
+        //     ['email' => 'adm@skeleton.com'],
+        //     [
+        //         'external_id' =>  Str::uuid()->toString(),
+        //         'name' => 'administrador',
+        //         'password' => bcrypt('adm@skeleton'),
+        //         'phone' => '99999999999',
+        //         'cpf' => '99999999999',
+        //         'birth_date' => '1990-01-02',
+        //         'active_role' => 'super_admin',
+        //     ]
+        // );
 
-        // Atribuindo roles ao usuário
-        $user->assignRole(['super_admin']);
+        // // Atribuindo roles ao usuário
+        // $user->assignRole(['super_admin']);
     }
 }

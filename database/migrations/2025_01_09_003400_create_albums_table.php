@@ -18,6 +18,8 @@ return new class extends Migration {
             $table->string('name');
             $table->foreignId('creator_user_id')->constrained('users')->cascadeOnDelete();
             $table->string('photo_url');
+            $table->boolean('is_public')->default(true);
+            $table->timestamp('published_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

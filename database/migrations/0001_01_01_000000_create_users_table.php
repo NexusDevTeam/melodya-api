@@ -15,8 +15,12 @@ return new class extends Migration {
             $table->string('auth0_id')->unique()->index();
             $table->string('auth0_user_id')->unique()->index();
             $table->string('auth0_provider')->index();
-            $table->text('bio')->nullable();
-            $table->rememberToken();
+            $table->string('name');
+            $table->string('email');
+            $table->string('avatar_auth0_url')->nullable();
+            $table->string('avatar_url')->nullable();
+            $table->boolean('email_verified')->default(false);
+            $table->boolean('is_social')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
