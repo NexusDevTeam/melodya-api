@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
@@ -15,6 +16,7 @@ class User extends Authenticatable
     use HasFactory;
     use Notifiable;
     use SoftDeletes;
+    use HasRoles;
 
     protected $guarded = ['id'];
 
@@ -77,13 +79,11 @@ class User extends Authenticatable
         return $this->follows()->where('followed_id', $user->id)->exists();
     }
 
-    public function isFavoriteAlbum(Album $album)
+    public function isFavorite($model)
     {
-        return $this->favorites()->where('album_id', $album->id)->exists();
-    }
-
-    public function isFavoritePlaylist(Playlist $playlist)
-    {
-        return $this->favorites()->where('playlist_id', $playlist->id)->exists();
+        return $this->favorites()
+            ->where('favoritable_id', $model->id)
+            ->where('favoritable_type', get_class($model))
+            ->exists();
     }
 }

@@ -12,6 +12,7 @@ return new class extends Migration {
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('external_id')->unique()->index();
             $table->string('auth0_id')->unique()->index();
             $table->string('auth0_user_id')->unique()->index();
             $table->string('auth0_provider')->index();
