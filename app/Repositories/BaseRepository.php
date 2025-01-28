@@ -2,12 +2,11 @@
 
 namespace App\Repositories;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Contracts\Role;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class BaseRepository
 {
@@ -32,8 +31,6 @@ class BaseRepository
 
     /**
      * BaseRepository constructor.
-     *
-     * @param Model|Role $model
      */
     public function __construct()
     {
@@ -41,17 +38,24 @@ class BaseRepository
     }
 
     /**
-     * @param $id
      * @return Model
      */
     public function find($id)
     {
-        return $this->model->find($id);
+        $find = $this->model->find($id);
+
+        if ($find) {
+            if ($this->resourceType) {
+                return new $this->resourceType($find);
+            }
+        }
+
+        return $find;
     }
 
     /**
      * @param $column string
-     * @param $value any
+     * @param $value  any
      *
      * @return Model
      */
@@ -63,8 +67,8 @@ class BaseRepository
     /**
      * Handles model before store.
      *
-     * @param Model $resource
      * @param array $attributes
+     *
      * @return Model
      */
     public function beforeStore($attributes)
@@ -76,9 +80,10 @@ class BaseRepository
      * Store a newly created resource in storage.
      *
      * @param array $attributes
+     *
      * @return Model
      */
-    public function create(Collection | array $attributes, $exec = false)
+    public function create(Collection|array $attributes, $exec = false)
     {
         if (!$exec) {
             return $this->beforeStore($attributes);
@@ -99,6 +104,7 @@ class BaseRepository
      * Handles create action attributes.
      *
      * @param array $attributes
+     *
      * @return array
      */
     public function createAttributes($attributes)
@@ -107,9 +113,10 @@ class BaseRepository
     }
 
     /**
-     * Filter attributes
+     * Filter attributes.
      *
      * @param array $attributes
+     *
      * @return array
      */
     public function filterAttributes($attributes)
@@ -121,7 +128,8 @@ class BaseRepository
      * Build a new object without saving.
      *
      * @param array $attributes
-     * @param bool $force
+     * @param bool  $force
+     *
      * @return Model
      */
     public function build($attributes, $force = false)
@@ -152,6 +160,7 @@ class BaseRepository
      *
      * @param Model $resource
      * @param array $attributes
+     *
      * @return Model
      */
     public function afterStore($resource, $attributes)
@@ -164,9 +173,8 @@ class BaseRepository
      *
      * @param Model $resource
      * @param array $attributes
-     * @return Model|JsonResource
      */
-    public function afterSave($resource, $attributes): Model | JsonResource
+    public function afterSave($resource, $attributes): Model|JsonResource
     {
         return $resource;
     }
@@ -177,6 +185,7 @@ class BaseRepository
     public function all($queryParams)
     {
         $perPage = $queryParams['per_page'] ?? 25;
+
         return $this->model->paginate($perPage);
     }
 
@@ -185,7 +194,7 @@ class BaseRepository
      *
      * @param Model $resource
      * @param array $attributes
-     * @param bool $force
+     *
      * @return Model
      */
     public function fill($resource, $attributes)
@@ -203,6 +212,7 @@ class BaseRepository
      * Remove the specified resource from storage.
      *
      * @param Model $resource
+     *
      * @return Model
      */
     public function delete($resource)
@@ -220,6 +230,7 @@ class BaseRepository
      * Handles model before delete.
      *
      * @param Model $resource
+     *
      * @return Model
      */
     public function beforeDelete($resource)
@@ -231,6 +242,7 @@ class BaseRepository
      * Handles model after delete.
      *
      * @param Model $resource
+     *
      * @return Model
      */
     public function afterDelete($resource)
@@ -243,6 +255,7 @@ class BaseRepository
      *
      * @param Model $resource
      * @param array $attributes
+     *
      * @return Model
      */
     public function beforeUpdate($resource, $attributes)
@@ -255,6 +268,7 @@ class BaseRepository
      *
      * @param Model $resource
      * @param array $attributes
+     *
      * @return Model
      */
     public function update($resource, $attributes, $exec = false)
@@ -278,6 +292,7 @@ class BaseRepository
      * Handles update action attributes.
      *
      * @param array $attributes
+     *
      * @return array
      */
     public function updateAttributes($attributes)
@@ -290,6 +305,7 @@ class BaseRepository
      *
      * @param Model $resource
      * @param array $attributes
+     *
      * @return Model
      */
     public function afterUpdate($resource, $attributes)
