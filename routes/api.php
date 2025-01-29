@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
-    include 'auth/routes.php';
-    include 'user/routes.php';
-});
+include 'unauth/routes.php';
+Route::middleware(['auth:sanctum'])
+    ->group(function () {
+        include 'auth/routes.php';
+        include 'user/routes.php';
+    });

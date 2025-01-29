@@ -19,10 +19,7 @@ class UserFormRequest extends CrudRequest
         $rules = [
             'name' => ['required', 'string'],
             'password' => ['sometimes', 'nullable', 'string', 'min:6'],
-            'phone' => ['required', 'string'],
-            'cpf' => ['required', 'string', 'min:11'],
-            'birth_date' => ['required', 'date'],
-            'image' => ['nullable'],
+            'avatar_url' => ['nullable'],
             'profile' => ['sometimes', 'required', 'string'],
         ];
 
@@ -40,11 +37,8 @@ class UserFormRequest extends CrudRequest
             'name' => ['required', 'string'],
             'email' => ['required', 'string', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6'],
-            'phone' => ['required', 'string'],
-            'cpf' => ['required', 'string', 'min:11', 'unique:users,cpf'],
-            'birth_date' => ['required', 'date'],
-            'image' => ['nullable', 'string_or_image'],
-            'profile' => ['required'],
+            'avatar_url' => ['nullable', 'string_or_image'],
+            'profile' => ['nullable'],
         ];
 
         return $rules;
