@@ -21,6 +21,7 @@ class UserSeeder extends Seeder
                 'name' => 'Melodya Admin',
                 'password' => bcrypt('adm@melodya'),
                 'active_role' => ActiveRoleUser::SUPER_ADMIN,
+                'email_verified_at' => now(),
             ]
         );
 

@@ -2,35 +2,27 @@
 
 namespace App\Http\Controllers\Api\V1\Auth;
 
-use App\Enums\ActiveRoleUser;
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\CrudController;
 use App\Http\Requests\Api\V1\User\UserFormRequest;
-use App\Http\Resources\User\UserResource;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use App\Repositories\Api\V1\Auth\AuthRepository;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 
-class AuthController extends Controller
+class AuthController extends CrudController
 {
+
+    protected $model = User::class;
+
+    public function __construct()
+    {
+        $this->repository = new AuthRepository();
+    }
+
     public function register(UserFormRequest $request)
     {
         $data = $request->validated();
-        $data['password'] = bcrypt($data['password']);
-        $role = ActiveRoleUser::CLIENT;
-        $data['active_role'] = $role;
-        $data['external_id'] = Str::uuid()->toString();
-        if (isset($data['image'])) {
-            $data['image'] = uploadImage($data['image'], 'users/avatar');
-        }
-        $user = User::create($data);
-
-        $user->assignRole($role);
-
-        // Enviar o e-mail de verificação
-        event(new Registered($user));
+        $this->repository->register($data);
 
         return response()->json(['message' => 'Verifique seu e-mail para verificar sua conta.'], 201);
     }
@@ -43,24 +35,10 @@ class AuthController extends Controller
             'remember_me' => 'boolean',
         ]);
 
-        $credentials = request(['email', 'password']);
-        if (!Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => 'Unauthorized',
-            ], 401);
-        }
-
-        $user = $request->user();
-        $tokenResult = $user->createToken('Personal Access Token');
-        $token = $tokenResult->plainTextToken;
-
-        return response()->json([
-            'accessToken' => $token,
-            'user' => new UserResource($user->load('roles.permissions')),
-        ]);
+        return $this->repository->login($request);
     }
 
-    public function logout(Request $request)
+    public function logout()
     {
         auth()->user()->tokens()->delete();
 
@@ -108,7 +86,6 @@ class AuthController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Verifica se o hash está correto
         if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
             return response()->json(['message' => 'Link de verificação inválido.'], 403);
         }
@@ -118,7 +95,6 @@ class AuthController extends Controller
         }
 
         if ($user->markEmailAsVerified()) {
-            // Despacha evento de verificação de e-mail
             event(new \Illuminate\Auth\Events\Verified($user));
 
             return response()->json(['message' => 'E-mail verificado com sucesso'], 200);
@@ -131,7 +107,7 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $user = User::where('email', $request->email)->first();
+        $user = $this->repository->findUserForEmail($request);
 
         if (!$user) {
             return response()->json(['message' => 'Usuário não encontrado.'], 404);
@@ -141,7 +117,6 @@ class AuthController extends Controller
             return response()->json(['message' => 'O e-mail já foi verificado.'], 200);
         }
 
-        // Enviar novamente o e-mail de verificação
         $user->sendEmailVerificationNotification();
 
         return response()->json(['message' => 'Link de verificação enviado novamente!'], 200);

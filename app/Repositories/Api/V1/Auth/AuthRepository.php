@@ -4,69 +4,57 @@ declare(strict_types=1);
 
 namespace App\Repositories\Api\V1\Auth;
 
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use App\Repositories\BaseRepository;
+use App\Enums\ActiveRoleUser;
+use Auth;
+use Illuminate\Auth\Events\Registered;
+use Str;
 
 class AuthRepository extends BaseRepository
 {
     protected $model = User::class;
 
-    public function userRegister()
+    public function register(array $data): User
     {
-        $userId = auth()->id();
-        if (User::whereNot('auth0_id', $userId)) {
-            $profile = getAuth0UserProfile($userId);
-
-            $user = User::create([
-                'external_id' => \Str::uuid()->toString(),
-                'auth0_id' => $profile['user_id'],
-                'auth0_user_id' => $profile['identities'][0]['user_id'],
-                'auth0_provider' => $profile['identities'][0]['provider'],
-                'name' => $profile['nickname'],
-                'email' => $profile['email'],
-                'avatar_auth0_url' => $profile['picture'],
-                'avatar_url' => $profile['picture'],
-                'email_verified' => $profile['email_verified'],
-                'is_social' => $profile['identities'][0]['isSocial'],
-                'created_at' => $profile['created_at'],
-                'updated_at' => $profile['updated_at'],
-            ]);
-
-            return response()->json([
-                'message' => 'User registered successfully',
-                'user' => $profile,
-            ], 201);
+        $data['password'] = bcrypt($data['password']);
+        $role = ActiveRoleUser::CLIENT;
+        $data['active_role'] = $role;
+        $data['external_id'] = Str::uuid()->toString();
+        if (isset($data['avatar_url'])) {
+            $data['avatar_url'] = uploadImage($data['avatar_url'], 'users/avatar');
         }
+        $user = User::create($data);
 
-        return response()->json([
-            'message' => 'User already registered',
-        ], 200);
+        $user->assignRole($role);
+
+        // Enviar o e-mail de verificação
+        event(new Registered($user));
+
+        return $user;
     }
 
-    public function userSync()
-    {
-        $userId = auth()->id();
-        if ($user = User::where('auth0_id', $userId)) {
-            $profile = getAuth0UserProfile($userId);
+    public function login($request) {
+        $credentials = request(['email', 'password']);
 
-            $user->update([
-                'auth0_user_id' => $profile['identities'][0]['user_id'],
-                'auth0_provider' => $profile['identities'][0]['provider'],
-                'email' => $profile['email'],
-                'avatar_auth0_url' => $profile['picture'],
-                'email_verified' => $profile['email_verified'],
-                'is_social' => $profile['identities'][0]['isSocial'],
-                'updated_at' => $profile['updated_at'],
-            ]);
-
+        if (!Auth::attempt($credentials)) {
             return response()->json([
-                'message' => 'User successfully synchronized',
-                'user' => $profile,
-            ], 201);
+                'message' => 'Unauthorized',
+            ], 401);
         }
 
+        $user = $request->user();
+        $tokenResult = $user->createToken('Personal Access Token');
+        $token = $tokenResult->plainTextToken;
+
         return response()->json([
-            'message' => 'User not found',
-        ], 404);
+            'accessToken' => $token,
+            'user' => new UserResource($user->load('roles.permissions')),
+        ]);
+    }
+
+    public function findUserForEmail($request) {
+        return User::where('email', $request->email)->first();
     }
 }
