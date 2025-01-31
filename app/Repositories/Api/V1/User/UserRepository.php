@@ -8,6 +8,7 @@ use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserListResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Str;
 
 class UserRepository extends BaseRepository
 {
@@ -29,6 +30,7 @@ class UserRepository extends BaseRepository
     public function beforeStore($attributes)
     {
         $attributes['profiles'] = json_decode($attributes['profiles']);
+        $attributes['external_id'] = Str::uuid()->toString();
 
         if (isset($attributes['password'])) {
             $attributes['password'] = bcrypt($attributes['password']);
@@ -36,8 +38,8 @@ class UserRepository extends BaseRepository
             unset($attributes['password']);
         }
 
-        if (request()->file('image')) {
-            $attributes['image'] = uploadImage(request()->image, 'users');
+        if (request()->file('avatar_url')) {
+            $attributes['avatar_url'] = uploadImage(request()->avatar_url, 'users');
         }
 
         return $this->create($attributes, true);
@@ -47,8 +49,8 @@ class UserRepository extends BaseRepository
     {
         $attributes['profiles'] = json_decode($attributes['profiles']);
 
-        if (request()->file('image')) {
-            $attributes['image'] = uploadImage(request()->image, 'users');
+        if (request()->file('avatar_url')) {
+            $attributes['avatar_url'] = uploadImage(request()->avatar_url, 'users');
         }
 
         return $this->update($resource, $attributes, true);
@@ -65,24 +67,12 @@ class UserRepository extends BaseRepository
         return new UserResource($this->model->with('roles.permissions')->find($id));
     }
 
-    public function changeRole($attributes)
-    {
-        $user = $this->model->find(auth()->user()->id);
-        $user->active_role = $attributes['active_role'];
-
-        $user->save();
-        return $user;
-    }
-
-    public function updateRoles($id, $attributes): Model|JsonResource
+    public function changeRole($id, $attributes): Model|JsonResource
     {
         $user = $this->model->find($id);
-        $user->syncRoles($attributes['roles']);
-
-        if (!in_array($user->active_role, $attributes['roles'])) {
-            $user->active_role = $attributes['roles'][0];
-            $user->save();
-        }
+        $user->syncRoles([$attributes['roles']]);
+        $user->active_role = $attributes['roles'];
+        $user->save();
 
         return $user;
     }

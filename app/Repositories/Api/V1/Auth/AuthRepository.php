@@ -11,6 +11,8 @@ use App\Enums\ActiveRoleUser;
 use Auth;
 use Illuminate\Auth\Events\Registered;
 use Str;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class AuthRepository extends BaseRepository
 {
@@ -29,7 +31,6 @@ class AuthRepository extends BaseRepository
 
         $user->assignRole($role);
 
-        // Enviar o e-mail de verificação
         event(new Registered($user));
 
         return $user;
@@ -39,9 +40,7 @@ class AuthRepository extends BaseRepository
         $credentials = request(['email', 'password']);
 
         if (!Auth::attempt($credentials)) {
-            return response()->json([
-                'message' => 'Unauthorized',
-            ], 401);
+            return $this->errorMessage('Unauthorized', 401, ["auth" => "Unauthorized"]);
         }
 
         $user = $request->user();
@@ -56,5 +55,19 @@ class AuthRepository extends BaseRepository
 
     public function findUserForEmail($request) {
         return User::where('email', $request->email)->first();
+    }
+
+    public function profile() {
+        return new UserResource(auth()->user()->load('roles.permissions'));
+    }
+
+    public function upgradeToArtist(): Model|JsonResource
+    {
+        $user = $this->model->find(auth()->user()->id);
+        $user->syncRoles(['artist']);
+        $user->active_role = 'artist';
+        $user->save();
+
+        return $user;
     }
 }

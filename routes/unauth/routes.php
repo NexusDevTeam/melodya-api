@@ -2,19 +2,25 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::post('auth/register', 'App\Http\Controllers\Api\V1\Auth\AuthController@register');
-Route::post('auth/login', 'App\Http\Controllers\Api\V1\Auth\AuthController@login');
-Route::post('auth/forgot-password', 'App\Http\Controllers\Api\V1\Auth\AuthController@forgotPassword');
-Route::post('auth/reset-password', 'App\Http\Controllers\Api\V1\Auth\AuthController@resetPassword');
+use App\Http\Controllers\Api\V1\Auth\AuthController;
 
-Route::get('/email/verify', function () {
-    return response()->json(['message' => 'Verifique seu e-mail para verificar sua conta.'], 409);
-})->middleware('auth')->name('verification.notice');
+Route::prefix('auth')->group(function () {
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('reset-password', [AuthController::class, 'resetPassword']);
+});
 
-Route::get('/email/verify/{id}/{hash}', 'App\Http\Controllers\Api\V1\Auth\AuthController@confirmRegister')
-    ->middleware(['signed'])
-    ->name('verification.verify');
+ Route::prefix('email')->group(function () {
+    Route::get('verify', function () {
+        return response()->json(['message' => 'Verifique seu e-mail para verificar sua conta.'], 409);
+    })->middleware('auth')->name('verification.notice');
 
-Route::post('/email/resend', 'App\Http\Controllers\Api\V1\Auth\AuthController@resendConfirmRegister')
-    ->middleware('throttle:6,1')
-    ->name('verification.resend');
+    Route::get('verify/{id}/{hash}', [AuthController::class, 'confirmRegister'])
+        ->middleware(['signed'])
+        ->name('verification.verify');
+
+    Route::post('resend', [AuthController::class, 'resendConfirmRegister'])
+        ->middleware('throttle:6,1')
+        ->name('verification.resend');
+});

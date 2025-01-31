@@ -25,11 +25,9 @@ class RolesAndPermissionsSeeder extends Seeder
         ]);
 
         $this->createRoleWithPermissions(ActiveRoleUser::ARTIST->value, ActiveRoleUser::ARTIST->label(), [
-            'user' => ['list'],
         ]);
 
         $this->createRoleWithPermissions(ActiveRoleUser::CLIENT->value, ActiveRoleUser::CLIENT->label(), [
-            'user' => ['list'],
         ]);
     }
 

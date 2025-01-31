@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Api\V1\Traits\ExceptionResponse;
 use App\Http\Controllers\Api\V1\Traits\HasForm;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Api\V1\Traits\ValidatesRequests;
 use Illuminate\Support\Facades\Schema;
 
 abstract class CrudController extends Controller
 {
     use HasForm;
     use ExceptionResponse;
+    use ValidatesRequests;
 
     protected $repository;
     protected $columns;
@@ -49,7 +51,7 @@ abstract class CrudController extends Controller
         $resource = $this->repository->find($id);
 
         if (!$resource) {
-            return $this->responseMessage('error', $this->modelName.' not found', $code = 404);
+            return $this->errorMessage($this->modelName.' not found', $code = 404,  $data = []);
         }
 
         return $resource;
@@ -60,7 +62,7 @@ abstract class CrudController extends Controller
         $resource = $this->repository->findBy($column, $value);
 
         if (!$resource) {
-            return $this->responseMessage('error', $this->modelName.' not found', $code = 404);
+            return $this->errorMessage($this->modelName.' not found', $code = 404,  $data = []);
         }
 
         return $resource;
@@ -71,7 +73,7 @@ abstract class CrudController extends Controller
         $resource = $this->repository->find($id);
 
         if (!$resource) {
-            return $this->responseMessage('error', $this->modelName.' not found', $code = 404);
+            return $this->errorMessage($this->modelName.' not found', $code = 404,  $data = []);
         }
 
         return $this->repository->update($resource, $this->formParams());
@@ -83,7 +85,7 @@ abstract class CrudController extends Controller
             $resource = $this->repository->find($id);
 
             if (!$resource) {
-                return $this->responseMessage('error', $this->modelName.' not found', $code = 404);
+                return $this->errorMessage($this->modelName.' not found', $code = 404);
             }
 
             return $this->repository->delete($resource);

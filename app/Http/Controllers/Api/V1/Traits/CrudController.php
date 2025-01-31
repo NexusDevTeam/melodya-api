@@ -49,7 +49,7 @@ abstract class CrudController extends Controller
         $resource = $this->repository->find($id);
 
         if (!$resource) {
-            return $this->responseMessage('error', $this->modelName.' not found', $code = 404);
+            return $this->errorMessage($this->modelName.' not found', $code = 404, $erros = []);
         }
 
         return $resource;
@@ -60,7 +60,7 @@ abstract class CrudController extends Controller
         $resource = $this->repository->find($id);
 
         if (!$resource) {
-            return $this->responseMessage('error', $this->modelName.' not found', $code = 404);
+            return $this->errorMessage($this->modelName.' not found', $code = 404, $erros = []);
         }
 
         return $this->repository->update($resource, $this->formParams());
@@ -72,7 +72,7 @@ abstract class CrudController extends Controller
             $resource = $this->repository->find($id);
 
             if (!$resource) {
-                return $this->responseMessage('error', $this->modelName.' not found', $code = 404);
+                return $this->errorMessage($this->modelName.' not found', $code = 404, $erros = []);
             }
 
             return $this->repository->delete($resource);

@@ -18,31 +18,13 @@ class UserController extends CrudController
         $this->repository = new UserRepository();
     }
 
-    public function changeRole(Request $request)
+    public function changeRole(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'active_role' => ['required', 'exists:roles,name'],
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => 'O campo role é obrigatório.'], 400);
-        }
-
-        $this->repository->changeRole($request->all());
-        return response()->json(['message' => 'Role changed successfully']);
-    }
-
-    public function updateRoles(Request $request, $id)
-    {
-        $validator = Validator::make($request->all(), [
+        $this->validateRequest($request, [
             'roles' => ['required', 'exists:roles,name'],
         ]);
 
-        if ($validator->fails()) {
-            return response()->json(['error' => 'O campo roles é obrigatório.'], 400);
-        }
-
-        $this->repository->updateRoles($id, $request->all());
+        $this->repository->changeRole($id, $request->all());
         return response()->json(['message' => 'Roles updated successfully']);
     }
 

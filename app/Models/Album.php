@@ -12,4 +12,12 @@ class Album extends Model
     use SoftDeletes;
 
     protected $guarded = ['id'];
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function sounds() {
+        return $this->hasMany(Sound::class);
+    }
 }

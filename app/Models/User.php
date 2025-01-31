@@ -96,4 +96,10 @@ class User extends Authenticatable implements Auditable, CanResetPassword, MustV
             ->where('favoritable_type', get_class($model))
             ->exists();
     }
+
+    public function historicSounds()
+    {
+        return $this->belongsToMany(Sound::class, 'music_plays', 'user_id', 'sound_id')
+                    ->withTimestamps();
+    }
 }

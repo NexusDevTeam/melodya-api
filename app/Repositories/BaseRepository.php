@@ -7,9 +7,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use App\Http\Controllers\Api\V1\Traits\ExceptionResponse;
 
 class BaseRepository
 {
+    use ExceptionResponse;
     /**
      * @var Model
      */

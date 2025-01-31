@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Password;
 
 class AuthController extends CrudController
 {
-
     protected $model = User::class;
 
     public function __construct()
@@ -24,12 +23,12 @@ class AuthController extends CrudController
         $data = $request->validated();
         $this->repository->register($data);
 
-        return response()->json(['message' => 'Verifique seu e-mail para verificar sua conta.'], 201);
+        return response()->json(['message' => 'Check your email to verify your account.'], 201);
     }
 
     public function login(Request $request)
     {
-        $request->validate([
+        $this->validateRequest($request, [
             'email' => 'required|string|email',
             'password' => 'required|string',
             'remember_me' => 'boolean',
@@ -43,13 +42,13 @@ class AuthController extends CrudController
         auth()->user()->tokens()->delete();
 
         return response()->json([
-            'message' => 'Successfully logged out',
+            'message' => 'Successfully logged out.',
         ]);
     }
 
     public function forgotPassword(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
+        $this->validateRequest($request, ['email' => 'required|email']);
 
         $status = Password::sendResetLink(
             $request->only('email')
@@ -62,7 +61,7 @@ class AuthController extends CrudController
 
     public function resetPassword(Request $request)
     {
-        $request->validate([
+        $this->validateRequest($request, [
             'token' => 'required',
             'email' => 'required|email',
             'password' => 'required|confirmed',
@@ -87,38 +86,48 @@ class AuthController extends CrudController
         $user = User::findOrFail($id);
 
         if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
-            return response()->json(['message' => 'Link de verificação inválido.'], 403);
+            return response()->json(['message' => 'Invalid verification link.'], 403);
         }
 
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'E-mail já verificado'], 409);
+            return response()->json(['message' => 'Email already verified.'], 409);
         }
 
         if ($user->markEmailAsVerified()) {
             event(new \Illuminate\Auth\Events\Verified($user));
 
-            return response()->json(['message' => 'E-mail verificado com sucesso'], 200);
+            return response()->json(['message' => 'Email successfully verified.'], 200);
         }
 
-        return response()->json(['message' => 'Erro ao verificar e-mail'], 500);
+        return response()->json(['message' => 'Error verifying email.'], 500);
     }
 
     public function resendConfirmRegister(Request $request)
     {
-        $request->validate(['email' => 'required|email']);
+        $this->validateRequest($request, ['email' => 'required|email']);
 
         $user = $this->repository->findUserForEmail($request);
 
         if (!$user) {
-            return response()->json(['message' => 'Usuário não encontrado.'], 404);
+            return response()->json(['message' => 'User not found.'], 404);
         }
 
         if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'O e-mail já foi verificado.'], 200);
+            return response()->json(['message' => 'The email is already verified.'], 200);
         }
 
         $user->sendEmailVerificationNotification();
 
-        return response()->json(['message' => 'Link de verificação enviado novamente!'], 200);
+        return response()->json(['message' => 'Verification link resent!'], 200);
+    }
+
+    public function profile() {
+        return $this->repository->profile();
+    }
+
+    public function upgradeToArtist()
+    {
+        $this->repository->upgradeToArtist();
+        return response()->json(['message' => 'User upgraded to artist successfully']);
     }
 }
