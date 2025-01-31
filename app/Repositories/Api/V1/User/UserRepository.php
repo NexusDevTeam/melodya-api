@@ -8,6 +8,7 @@ use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserListResource;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Storage;
 use Str;
 
 class UserRepository extends BaseRepository
@@ -20,8 +21,7 @@ class UserRepository extends BaseRepository
         $users = $this->model
             ->when(isset($queryParams['q']), function ($query) use ($queryParams) {
                 $query->where('name', 'like', '%' . $queryParams['q'] . '%')
-                    ->orWhere('email', 'like', '%' . $queryParams['q'] . '%')
-                    ->orWhere('nickname', 'like', '%' . $queryParams['q'] . '%');
+                    ->orWhere('email', 'like', '%' . $queryParams['q'] . '%');
             })
             ->paginate($perPage);
         return UserListResource::collection($users);
@@ -39,7 +39,7 @@ class UserRepository extends BaseRepository
         }
 
         if (request()->file('avatar_url')) {
-            $attributes['avatar_url'] = uploadImage(request()->avatar_url, 'users');
+            $attributes['avatar_url'] = uploadImage(request()->avatar_url, 'users/avatar');
         }
 
         return $this->create($attributes, true);
@@ -50,7 +50,10 @@ class UserRepository extends BaseRepository
         $attributes['profiles'] = json_decode($attributes['profiles']);
 
         if (request()->file('avatar_url')) {
-            $attributes['avatar_url'] = uploadImage(request()->avatar_url, 'users');
+            if ($resource->avatar_url) {
+                deleteImage($resource->avatar_url);
+            }
+            $attributes['avatar_url'] = uploadImage(request()->avatar_url, 'users/avatar');
         }
 
         return $this->update($resource, $attributes, true);

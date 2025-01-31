@@ -45,4 +45,9 @@ class ImageUploaderService
             abort(422, $validator->errors()->first());
         }
     }
+
+    public function delete($path)
+    {
+        return Storage::disk($this->disk)->delete($path);
+    }
 }

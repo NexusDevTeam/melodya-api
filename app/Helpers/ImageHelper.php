@@ -16,4 +16,10 @@ if (!function_exists('uploadImage')) {
         $uploader = new ImageUploaderService($disk);
         return $uploader->upload($file, $path);
     }
+
+    function deleteImage($path, $disk = 's3')
+    {
+        $uploader = new ImageUploaderService($disk);
+        return $uploader->delete($path);
+    }
 }
