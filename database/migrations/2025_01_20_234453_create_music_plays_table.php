@@ -7,14 +7,12 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('playlist_sounds', function (Blueprint $table) {
+        Schema::create('music_plays', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('playlist_id')->constrained('playlists')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('sound_id')->constrained('sounds')->cascadeOnDelete();
             $table->timestamps();
             $table->softDeletes();
@@ -23,11 +21,9 @@ return new class extends Migration {
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
-        Schema::dropIfExists('playlist_sounds');
+        Schema::dropIfExists('music_plays');
     }
 };

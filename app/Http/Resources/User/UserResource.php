@@ -21,11 +21,11 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $image = $this->resource->image ? env('AWS_URL') . $this->resource->image : null;
+        $avatar_url = $this->resource->avatar_url ? env('AWS_URL') . $this->resource->avatar_url : null;
 
         return [
             ...$this->resource->toArray(),
-            'image' => $image,
+            'avatar_url' => $avatar_url,
             'roles' => $this->rolesAndPermissions(),
         ];
     }

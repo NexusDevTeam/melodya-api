@@ -16,6 +16,9 @@ return new class extends Migration {
             $table->id();
             $table->string('external_id')->unique()->index();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->string('artist_name');
+            $table->text('bio')->nullable();
+            $table->string('banner_url')->nullable();
             $table->json('photos_url')->nullable();
             $table->json('social_media')->nullable();
             $table->timestamps();

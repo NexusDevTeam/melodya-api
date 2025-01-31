@@ -19,5 +19,13 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->render(function (\Spatie\Permission\Exceptions\UnauthorizedException $e, $request) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'User does not have the right permissions.',
+                'errors' => [
+                    'permission' => 'You do not have the required permissions to access this resource.'
+                ]
+            ], 403);
+        });
     })->create();

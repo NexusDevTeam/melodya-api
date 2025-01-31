@@ -16,16 +16,20 @@ abstract class CrudController extends Controller
     protected $columns;
     protected $model;
 
+    protected $modelName;
+
     public function __construct($repository)
     {
         $this->repository = $repository;
-        $this->model      = app($this->model);
-        $this->columns    = Schema::getColumnListing($this->model->getTable());
+        $this->model = app($this->model);
+        $this->columns = Schema::getColumnListing($this->model->getTable());
+        $this->modelName = class_basename($this->model);
     }
 
     public function index()
     {
         $queryParams = request()->query();
+
         return $this->repository->all($queryParams);
     }
 
@@ -45,7 +49,7 @@ abstract class CrudController extends Controller
         $resource = $this->repository->find($id);
 
         if (!$resource) {
-            return $this->responseMessage('error', 'Recurso não encontrado', $code = 422);
+            return $this->errorMessage($this->modelName.' not found', $code = 404, $erros = []);
         }
 
         return $resource;
@@ -56,7 +60,7 @@ abstract class CrudController extends Controller
         $resource = $this->repository->find($id);
 
         if (!$resource) {
-            return $this->responseMessage('error', 'Recurso não encontrado', $code = 422);
+            return $this->errorMessage($this->modelName.' not found', $code = 404, $erros = []);
         }
 
         return $this->repository->update($resource, $this->formParams());
@@ -68,7 +72,7 @@ abstract class CrudController extends Controller
             $resource = $this->repository->find($id);
 
             if (!$resource) {
-                return $this->responseMessage('error', 'Recurso não encontrado', $code = 422);
+                return $this->errorMessage($this->modelName.' not found', $code = 404, $erros = []);
             }
 
             return $this->repository->delete($resource);

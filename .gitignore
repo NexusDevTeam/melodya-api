@@ -22,3 +22,4 @@ yarn-error.log
 /.vscode
 /.zed
 .auth0.*.json
+.qodo

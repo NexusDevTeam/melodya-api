@@ -16,9 +16,7 @@ return new class extends Migration {
             $table->string('name');
             $table->string('email')->unique()->index();
             $table->string('password');
-            $table->string('phone');
-            $table->date('birth_date');
-            $table->text('avatar_url')->nullable();
+            $table->string('avatar_url')->nullable();
             $table->string('active_role');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

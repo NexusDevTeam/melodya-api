@@ -17,8 +17,7 @@ return new class extends Migration {
             $table->string('external_id')->unique()->index();
             $table->string('name');
             $table->string('sound_url');
-            $table->unsignedInteger('number_reproductions')->default(0);
-            $table->unsignedInteger('duration_seconds');
+            $table->integer('duration_seconds');
             $table->json('credits')->nullable();
             $table->foreignId('album_id')->constrained('albums')->cascadeOnDelete();
             $table->timestamps();
