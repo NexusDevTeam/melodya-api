@@ -3,6 +3,7 @@
 namespace App\Repositories\Api\V1\Artist;
 
 use App\Enums\ActiveRoleUser;
+use App\Http\Resources\Artist\ArtistResource;
 use App\Models\Artist;
 use App\Repositories\BaseRepository;
 use Str;
@@ -11,15 +12,19 @@ class ArtistRepository extends BaseRepository
 {
     protected $model = Artist::class;
 
+    protected $resourceType = ArtistResource::class;
+
     public function all($queryParams)
     {
         $perPage = $queryParams['per_page'] ?? 25;
+
         $artists = $this->model
             ->when(isset($queryParams['q']), function ($query) use ($queryParams) {
                 $query->where('artist_name', 'like', '%' . $queryParams['q'] . '%');
             })
             ->paginate($perPage);
-        return $artists;
+
+            return $this->resourceType::collection($artists);
     }
 
     public function beforeStore($attributes)
@@ -70,5 +75,10 @@ class ArtistRepository extends BaseRepository
         }
 
         return $this->update($resource, $attributes, true);
+    }
+
+    public function profileArtist()
+    {
+        return new $this->resourceType($this->authUser->artist);
     }
 }

@@ -15,7 +15,7 @@ return new class extends Migration {
         Schema::create('artists', function (Blueprint $table) {
             $table->id();
             $table->string('external_id')->unique()->index();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('user_id')->unique()->constrained('users')->cascadeOnDelete();
             $table->string('artist_name');
             $table->text('bio')->nullable();
             $table->string('banner_url')->nullable();

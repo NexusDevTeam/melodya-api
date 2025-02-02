@@ -18,9 +18,12 @@ abstract class CrudController extends Controller
 
     protected $modelName;
 
-    public function __construct($repository)
+    protected $authUser;
+
+    public function __construct()
     {
-        $this->repository = $repository;
+        $this->repository = app($this->repository);
+        $this->authUser = auth()->user();
         $this->model = app($this->model);
         $this->columns = Schema::getColumnListing($this->model->getTable());
         $this->modelName = class_basename($this->model);

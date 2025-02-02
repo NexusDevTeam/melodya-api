@@ -7,12 +7,15 @@ use App\Http\Controllers\Api\V1\Traits\HasForm;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Api\V1\Traits\ValidatesRequests;
 use Illuminate\Support\Facades\Schema;
+use App\Models\User;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 abstract class CrudController extends Controller
 {
     use HasForm;
     use ExceptionResponse;
     use ValidatesRequests;
+    use AuthorizesRequests;
 
     protected $repository;
     protected $columns;
@@ -22,9 +25,9 @@ abstract class CrudController extends Controller
 
     protected $authUser;
 
-    public function __construct($repository)
+    public function __construct()
     {
-        $this->repository = $repository;
+        $this->repository = app($this->repository);
         $this->authUser = auth()->user();
         $this->model = app($this->model);
         $this->columns = Schema::getColumnListing($this->model->getTable());
@@ -74,6 +77,8 @@ abstract class CrudController extends Controller
     public function update($id)
     {
         $resource = $this->repository->find($id);
+
+        $this->authorize('hasPermission', $resource);
 
         if (!$resource) {
             return $this->errorMessage($this->modelName.' not found', $code = 404,  $data = []);

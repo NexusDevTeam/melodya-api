@@ -11,4 +11,6 @@ Route::prefix('auth')->group(function () {
     Route::put('edit-profile', 'App\Http\Controllers\Api\V1\Auth\AuthController@editProfile');
 
     Route::put('upgrade-to-artist', 'App\Http\Controllers\Api\V1\Auth\AuthController@upgradeToArtist');
+
+    include('artist/routes.php');
 });
