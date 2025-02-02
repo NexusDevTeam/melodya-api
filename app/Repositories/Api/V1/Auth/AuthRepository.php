@@ -58,16 +58,29 @@ class AuthRepository extends BaseRepository
     }
 
     public function profile() {
-        return new UserResource(auth()->user()->load('roles.permissions'));
+        return new UserResource($this->authUser->load('roles.permissions'));
+    }
+
+    public function editProfile($data) {
+        if (isset($data['avatar_url'])) {
+            $data['avatar_url'] = uploadImage($data['avatar_url'], 'users/avatar');
+        }
+        $updateSuccessful = $this->authUser->update($data);
+
+        if ($updateSuccessful) {
+            return new UserResource($this->authUser->load('roles.permissions'));
+        }
+
+        return $this->errorMessage('Profile update failed', 500);
     }
 
     public function upgradeToArtist(): Model|JsonResource
     {
-        $user = $this->model->find(auth()->user()->id);
+        $user = $this->model->find($this->authUser->id);
         $user->syncRoles(['artist']);
         $user->active_role = 'artist';
         $user->save();
 
-        return $user;
+        return new UserResource($user);
     }
 }

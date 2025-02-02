@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Api\V1\User;
 
+use App\Enums\ActiveRoleUser;
 use App\Http\Requests\CrudRequest;
 use App\Models\User;
+use Illuminate\Validation\Rules\Enum;
 
 class UserFormRequest extends CrudRequest
 {
@@ -17,10 +19,10 @@ class UserFormRequest extends CrudRequest
     protected function editRules()
     {
         $rules = [
-            'name' => ['required', 'string'],
-            'password' => ['sometimes', 'nullable', 'string', 'min:6'],
-            'avatar_url' => ['nullable'],
-            'profile' => ['sometimes', 'required', 'string'],
+            'name' => ['sometimes','required', 'string'],
+            'password' => ['nullable', 'string', 'min:6'],
+            'avatar_url' => ['nullable', 'string_or_image'],
+            'profile' => ['nullable', 'string', new Enum(ActiveRoleUser::class)],
         ];
 
         return $rules;
@@ -38,7 +40,7 @@ class UserFormRequest extends CrudRequest
             'email' => ['required', 'string', 'unique:users,email'],
             'password' => ['required', 'string', 'min:6'],
             'avatar_url' => ['nullable', 'string_or_image'],
-            'profile' => ['nullable'],
+            'profile' => ['nullable', 'string', new Enum(ActiveRoleUser::class)],
         ];
 
         return $rules;

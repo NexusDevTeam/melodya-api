@@ -31,12 +31,15 @@ class BaseRepository
      */
     protected $resourceInstance;
 
+    protected $authUser;
+
     /**
      * BaseRepository constructor.
      */
     public function __construct()
     {
         $this->model = app($this->model);
+        $this->authUser = auth()->user();
     }
 
     /**

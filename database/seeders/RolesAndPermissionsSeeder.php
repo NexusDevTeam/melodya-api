@@ -15,19 +15,23 @@ class RolesAndPermissionsSeeder extends Seeder
     public function run(): void
     {
         $this->createRoleWithPermissions(ActiveRoleUser::SUPER_ADMIN->value, ActiveRoleUser::SUPER_ADMIN->label(), [
-            'user' => ['edit', 'list', 'create', 'delete'],
-            'permission' => ['edit', 'list', 'create', 'delete'],
-            'role' => ['edit', 'list', 'create', 'delete'],
+            'user' => ['list', 'create', 'edit', 'delete'],
+            'permission' => ['list', 'create', 'edit', 'delete'],
+            'role' => ['list', 'create', 'edit', 'delete'],
+            'artist' => ['list', 'create', 'edit', 'delete'],
         ]);
 
         $this->createRoleWithPermissions(ActiveRoleUser::ADMIN->value, ActiveRoleUser::ADMIN->label(), [
-            'user' => ['edit', 'list', 'create', 'delete'],
+            'user' => ['list', 'create', 'edit', 'delete'],
+            'artist' => ['list', 'create', 'edit', 'delete'],
         ]);
 
         $this->createRoleWithPermissions(ActiveRoleUser::ARTIST->value, ActiveRoleUser::ARTIST->label(), [
+            'artist' => ['list', 'create', 'edit'],
         ]);
 
         $this->createRoleWithPermissions(ActiveRoleUser::CLIENT->value, ActiveRoleUser::CLIENT->label(), [
+            'artist' => ['list'],
         ]);
     }
 

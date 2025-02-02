@@ -39,7 +39,7 @@ class AuthController extends CrudController
 
     public function logout()
     {
-        auth()->user()->tokens()->delete();
+        $this->authUser->tokens()->delete();
 
         return response()->json([
             'message' => 'Successfully logged out.',
@@ -123,6 +123,14 @@ class AuthController extends CrudController
 
     public function profile() {
         return $this->repository->profile();
+    }
+
+    public function editProfile(UserFormRequest $request)
+    {
+        $request->validated();
+        $this->repository->editProfile($request->all());
+
+        return response()->json(['message' => 'Profile updated successfully']);
     }
 
     public function upgradeToArtist()

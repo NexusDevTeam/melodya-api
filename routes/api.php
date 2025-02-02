@@ -6,5 +6,6 @@ include 'unauth/routes.php';
 Route::middleware(['auth:sanctum'])
     ->group(function () {
         include 'auth/routes.php';
-        include 'user/routes.php';
+
+        include 'admin/routes.php';
     });

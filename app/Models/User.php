@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\ActiveRoleUser;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -101,5 +102,10 @@ class User extends Authenticatable implements Auditable, CanResetPassword, MustV
     {
         return $this->belongsToMany(Sound::class, 'music_plays', 'user_id', 'sound_id')
                     ->withTimestamps();
+    }
+
+    public function isAdministrator()
+    {
+        return ActiveRoleUser::admin($this->id);
     }
 }
