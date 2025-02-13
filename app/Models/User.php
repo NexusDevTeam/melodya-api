@@ -7,6 +7,7 @@ use App\Enums\ActiveRoleUser;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -50,6 +51,11 @@ class User extends Authenticatable implements Auditable, CanResetPassword, MustV
         ];
     }
 
+    public static function findByExternalId($externalId)
+    {
+        return self::where('external_id', $externalId)->first();
+    }
+
     public function playlists()
     {
         return $this->hasMany(Playlist::class);
@@ -70,24 +76,29 @@ class User extends Authenticatable implements Auditable, CanResetPassword, MustV
         return $this->hasOne(Artist::class);
     }
 
-    public function follows()
+    public function following(): BelongsToMany
     {
-        return $this->hasMany(Follow::class);
+        return $this->belongsToMany(User::class, 'follows', 'following_user_id', 'followed_user_id');
     }
 
-    public function followers()
+    public function followers(): BelongsToMany
     {
-        return $this->hasMany(Follow::class, 'followed_id');
+        return $this->belongsToMany(User::class, 'follows', 'followed_user_id', 'following_user_id');
     }
 
-    public function isFollowedBy(User $user)
+    public function follow(User $user)
     {
-        return $this->followers()->where('follower_id', $user->id)->exists();
+        return $this->following()->attach($user->id);
+    }
+
+    public function unfollow(User $user)
+    {
+        return $this->following()->detach($user->id);
     }
 
     public function isFollowing(User $user)
     {
-        return $this->follows()->where('followed_id', $user->id)->exists();
+        return $this->following()->where('followed_user_id', $user->id)->exists();
     }
 
     public function isFavorite($model)

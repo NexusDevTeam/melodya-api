@@ -6,31 +6,30 @@ use Illuminate\Http\JsonResponse;
 
 trait ExceptionResponse
 {
-    public function exceptionMessage($exception): JsonResponse
+    public static function exceptionMessage($exception): JsonResponse
     {
         return response()->json([
-            'errors' =>
-                "message: {$exception->getMessage()},
+            'errors' => "message: {$exception->getMessage()},
                 line: {$exception->getLine()},
-                file: {$exception->getFile()}"
-            ], 500);
+                file: {$exception->getFile()}",
+        ], 500);
     }
 
-    public function errorMessage(string $message = 'error', int $code = 400, array $errors = []): JsonResponse
+    public static function errorMessage(string $message = 'error', int $code = 400, array $errors = []): JsonResponse
     {
         return response()->json([
-            'status'  => 'error',
+            'status' => 'error',
             'message' => $message,
-            'errors' => $errors
+            'errors' => $errors,
         ], $code);
     }
 
-    public function responseMessage(string $message = 'success', int $code = 200, array $data = []): JsonResponse
+    public static function responseMessage(string $message = 'success', int $code = 200, array $data = []): JsonResponse
     {
         return response()->json([
-            'status'  => "success",
+            'status' => 'success',
             'message' => $message,
-            'data'    => $data,
+            'data' => $data,
         ], $code);
     }
 }

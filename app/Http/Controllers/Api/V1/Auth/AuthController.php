@@ -121,21 +121,42 @@ class AuthController extends CrudController
         return response()->json(['message' => 'Verification link resent!'], 200);
     }
 
-    public function profile() {
+    public function profile()
+    {
         return $this->repository->profile();
     }
 
     public function editProfile(UserFormRequest $request)
     {
-        $request->validated();
         $this->repository->editProfile($request->all());
 
-        return response()->json(['message' => 'Profile updated successfully']);
+        return $this->responseMessage('Profile updated successfully');
     }
 
     public function upgradeToArtist()
     {
         $this->repository->upgradeToArtist();
-        return response()->json(['message' => 'User upgraded to artist successfully']);
+
+        return $this->responseMessage('User upgraded to artist successfully');
+    }
+
+    public function follow($uuid)
+    {
+        return $this->repository->follow($uuid);
+    }
+
+    public function unfollow($uuid)
+    {
+        return $this->repository->unfollow($uuid);
+    }
+
+    public function following()
+    {
+        return $this->repository->followingList();
+    }
+
+    public function followers()
+    {
+        return $this->repository->followersList();
     }
 }
