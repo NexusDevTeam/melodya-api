@@ -2,8 +2,10 @@
 
 namespace App\Exceptions;
 
+use App\Http\Controllers\Api\V1\Traits\ExceptionResponse;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Throwable;
+use Illuminate\Http\JsonResponse;
 
 class Handler extends ExceptionHandler
 {
@@ -23,8 +25,19 @@ class Handler extends ExceptionHandler
      */
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->reportable(function (\Throwable $e) {
         });
+    }
+
+    /**
+     * Renderiza exceções personalizadas.
+     */
+    public function render($request, \Throwable $exception): JsonResponse
+    {
+        if ($exception instanceof ModelNotFoundException) {
+            return ExceptionResponse::errorMessage('Not Found', 404, ['error' => 'Resource not found']);
+        }
+
+        return parent::render($request, $exception);
     }
 }

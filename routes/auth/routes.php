@@ -3,7 +3,6 @@
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
-
     Route::get('logout', 'App\Http\Controllers\Api\V1\Auth\AuthController@logout');
 
     Route::get('profile', 'App\Http\Controllers\Api\V1\Auth\AuthController@profile');
@@ -12,5 +11,13 @@ Route::prefix('auth')->group(function () {
 
     Route::put('upgrade-to-artist', 'App\Http\Controllers\Api\V1\Auth\AuthController@upgradeToArtist');
 
-    include('artist/routes.php');
+    Route::post('follow/{externalId}', 'App\Http\Controllers\Api\V1\Auth\AuthController@follow');
+
+    Route::post('unfollow/{externalId}', 'App\Http\Controllers\Api\V1\Auth\AuthController@unfollow');
+
+    Route::get('following', 'App\Http\Controllers\Api\V1\Auth\AuthController@following');
+
+    Route::get('followers', 'App\Http\Controllers\Api\V1\Auth\AuthController@followers');
+
+    include 'artist/routes.php';
 });
